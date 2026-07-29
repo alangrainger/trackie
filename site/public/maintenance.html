@@ -1,0 +1,131 @@
+<!doctype html>
+<!--
+  Served with a 503 by the app.trackie.nz and auth.trackie.nz vhosts whenever the
+  app container is down (planned maintenance or an unplanned crash). Deliberately
+  static: no JavaScript and no auto-refresh, so a page left open cannot hammer a
+  server that is mid-maintenance.
+
+  Deployed as part of the static site (Astro copies public/ verbatim), so it lands
+  at /sites/trackie.nz/maintenance.html alongside the landing page it borrows its
+  branding from.
+-->
+<html lang="en-NZ">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Trackie - back shortly</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="https://trackie.nz/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="https://trackie.nz/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="https://trackie.nz/favicon-16x16.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --rust: #c25a2e;
+        --cream: #e7e3dd;
+        --card: #f5f0e7;
+        --ink: #2b2724;
+        --muted: #6b645d;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 22px;
+        font-family: 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+        background: var(--cream);
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      ::selection {
+        background: var(--rust);
+        color: #fff;
+      }
+
+      main {
+        width: 100%;
+        max-width: 560px;
+        padding: 44px 40px 40px;
+        border-radius: 22px;
+        background: var(--card);
+        box-shadow: 0 18px 50px -28px rgba(43, 39, 36, 0.35);
+        text-align: center;
+      }
+
+      img {
+        width: 168px;
+        max-width: 60%;
+        height: auto;
+        margin: 0 auto 34px;
+        display: block;
+      }
+
+      h1 {
+        margin: 0 0 18px;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1.15;
+      }
+
+      p {
+        margin: 0 0 18px;
+        font-size: 1.0625rem;
+        line-height: 1.6;
+        color: var(--muted);
+      }
+
+      p:last-of-type {
+        margin-bottom: 0;
+      }
+
+      .keep-going {
+        margin-top: 28px;
+        padding-top: 24px;
+        border-top: 1px solid rgba(43, 39, 36, 0.1);
+      }
+
+      a {
+        color: var(--rust);
+        font-weight: 500;
+      }
+
+      @media (max-width: 480px) {
+        main {
+          padding: 34px 26px 30px;
+        }
+
+        h1 {
+          font-size: 1.625rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <img src="https://trackie.nz/logo-black.svg" alt="Trackie" />
+      <h1>Back shortly</h1>
+      <p>
+        Trackie is briefly offline while we do some maintenance. Nothing is
+        wrong and nothing is lost - your budget is safe and we will be back in
+        a few minutes.
+      </p>
+      <p class="keep-going">
+        Already have Trackie open in another tab? Keep budgeting. Your changes
+        are saved on your device and will sync automatically once we are back.
+      </p>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,102 @@
+diff --git a/packages/desktop-client/src/components/Titlebar.tsx b/packages/desktop-client/src/components/Titlebar.tsx
+index 2257a1e..208e4ef 100644
+--- a/packages/desktop-client/src/components/Titlebar.tsx
++++ b/packages/desktop-client/src/components/Titlebar.tsx
+@@ -136,8 +136,9 @@ function ServerSyncButton({ style, isMobile = false }: ServerSyncButtonProps) {
+       if (event.type === 'error') {
+         // Use the offline state if either there is a network error or
+         // if this file isn't a "cloud file". You can't sync a local
+-        // file.
+-        if (event.subtype === 'network') {
++        // file. Trackie's maintenance reason is a deliberate, temporary
++        // outage, so show it as offline rather than a red sync error.
++        if (event.subtype === 'network' || event.subtype === 'maintenance') {
+           setSyncState('offline');
+         } else if (!cloudFileId) {
+           setSyncState('local');
+diff --git a/packages/desktop-client/src/sync-events.ts b/packages/desktop-client/src/sync-events.ts
+index ad99481..aa86b4d 100644
+--- a/packages/desktop-client/src/sync-events.ts
++++ b/packages/desktop-client/src/sync-events.ts
+@@ -10,13 +10,22 @@ import {
+   uploadBudget,
+ } from './budgetfiles/budgetfilesSlice';
+ import { pushModal } from './modals/modalsSlice';
+-import { addNotification } from './notifications/notificationsSlice';
++import {
++  addNotification,
++  removeNotification,
++} from './notifications/notificationsSlice';
+ import type { Notification } from './notifications/notificationsSlice';
+ import { payeeQueries } from './payees';
+ import { loadPrefs } from './prefs/prefsSlice';
+ import type { AppStore } from './redux/store';
+ import { signOut } from './users/usersSlice';
+ 
++/**
++ * Sticky id for the maintenance notice, so the sync-success handler can clear
++ * the same toast the maintenance branch raised.
++ */
++const MAINTENANCE_NOTIFICATION_ID = 'server-maintenance';
++
+ export function listenForSyncEvent(store: AppStore, queryClient: QueryClient) {
+   // TODO: Should this run on mobile too?
+   const unlistenUnauthorized = listen('sync-event', async ({ type }) => {
+@@ -35,6 +44,14 @@ export function listenForSyncEvent(store: AppStore, queryClient: QueryClient) {
+   });
+ 
+   let attemptedSyncRepair = false;
++  /*
++    Every local edit schedules a sync a second later, so without this a
++    dismissed maintenance notice would reappear as soon as the user typed
++    anything - exactly what the message invites them to do. Set only from the
++    notification's own onClose, which fires on user dismissal and not on the
++    programmatic removal below.
++  */
++  let maintenanceDismissed = false;
+ 
+   const unlistenSuccess = listen('sync-event', event => {
+     const prefs = store.getState().prefs.local;
+@@ -44,6 +61,11 @@ export function listenForSyncEvent(store: AppStore, queryClient: QueryClient) {
+     }
+ 
+     if (event.type === 'success' || event.type === 'applied') {
++      // The maintenance notice is sticky, so clear it once the server is back,
++      // and re-arm it for any future outage.
++      maintenanceDismissed = false;
++      store.dispatch(removeNotification({ id: MAINTENANCE_NOTIFICATION_ID }));
++
+       if (attemptedSyncRepair) {
+         attemptedSyncRepair = false;
+ 
+@@ -350,6 +372,30 @@ export function listenForSyncEvent(store: AppStore, queryClient: QueryClient) {
+             ),
+           };
+           break;
++        case 'maintenance':
++          // Trackie's reverse proxy answers with this reason whenever the app
++          // container is down. Nothing is broken and nothing is lost, so say
++          // so calmly instead of raising a sync error. Told once is enough:
++          // if the user has closed it, stay quiet until the server is back.
++          if (maintenanceDismissed) {
++            break;
++          }
++
++          notif = {
++            title: t('Server maintenance'),
++            message: t(
++              "Trackie's server is briefly unavailable for maintenance. Your " +
++                'budget is safe on this device and will sync automatically ' +
++                "when it's back.",
++            ),
++            type: 'warning',
++            sticky: true,
++            id: MAINTENANCE_NOTIFICATION_ID,
++            onClose: () => {
++              maintenanceDismissed = true;
++            },
++          };
++          break;
+         case 'network':
+           // Show nothing
+           break;
