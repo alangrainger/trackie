@@ -1,1 +1,5 @@
-{ "status": "error", "reason": "maintenance" }
+{
+	"status": "error",
+	"reason": "maintenance",
+	"data": { "bootstrapped": true, "loginMethod": "openid", "availableLoginMethods": [], "multiuser": false }
+}

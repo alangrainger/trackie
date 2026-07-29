@@ -15,7 +15,7 @@ index 2257a1e..208e4ef 100644
          } else if (!cloudFileId) {
            setSyncState('local');
 diff --git a/packages/desktop-client/src/sync-events.ts b/packages/desktop-client/src/sync-events.ts
-index ad99481..aa86b4d 100644
+index ad99481..c25f3bd 100644
 --- a/packages/desktop-client/src/sync-events.ts
 +++ b/packages/desktop-client/src/sync-events.ts
 @@ -10,13 +10,22 @@ import {
@@ -57,19 +57,24 @@ index ad99481..aa86b4d 100644
  
    const unlistenSuccess = listen('sync-event', event => {
      const prefs = store.getState().prefs.local;
-@@ -44,6 +61,11 @@ export function listenForSyncEvent(store: AppStore, queryClient: QueryClient) {
+@@ -44,6 +61,16 @@ export function listenForSyncEvent(store: AppStore, queryClient: QueryClient) {
      }
  
      if (event.type === 'success' || event.type === 'applied') {
 +      // The maintenance notice is sticky, so clear it once the server is back,
-+      // and re-arm it for any future outage.
-+      maintenanceDismissed = false;
-+      store.dispatch(removeNotification({ id: MAINTENANCE_NOTIFICATION_ID }));
++      // and re-arm it for any future outage. Only 'success' proves a server
++      // round-trip - 'applied' also fires for purely local edits, which during
++      // an outage would undo a user's dismissal a second before the failed
++      // sync re-raises the notice.
++      if (event.type === 'success') {
++        maintenanceDismissed = false;
++        store.dispatch(removeNotification({ id: MAINTENANCE_NOTIFICATION_ID }));
++      }
 +
        if (attemptedSyncRepair) {
          attemptedSyncRepair = false;
  
-@@ -350,6 +372,30 @@ export function listenForSyncEvent(store: AppStore, queryClient: QueryClient) {
+@@ -350,6 +377,30 @@ export function listenForSyncEvent(store: AppStore, queryClient: QueryClient) {
              ),
            };
            break;
