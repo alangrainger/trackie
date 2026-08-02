@@ -1,8 +1,8 @@
 diff --git a/packages/desktop-client/src/components/FinancesApp.tsx b/packages/desktop-client/src/components/FinancesApp.tsx
-index 19e0367..cd56173 100644
+index 84176384..4f324c2a 100644
 --- a/packages/desktop-client/src/components/FinancesApp.tsx
 +++ b/packages/desktop-client/src/components/FinancesApp.tsx
-@@ -9,17 +9,17 @@ import { theme } from '@actual-app/components/theme';
+@@ -9,19 +9,18 @@ import { theme } from '@actual-app/components/theme';
  import { View } from '@actual-app/components/view';
  import * as undo from '@actual-app/core/platform/client/undo';
  
@@ -22,9 +22,11 @@ index 19e0367..cd56173 100644
 +import { useDispatch } from '#redux';
 +import { getIsOutdated, getLatestVersion } from '#util/versions';
  
- import { UserAccessPage } from './admin/UserAccess/UserAccessPage';
+-import { UserAccessPage } from './admin/UserAccess/UserAccessPage';
  import { UserDirectoryPage } from './admin/UserDirectory/UserDirectoryPage';
-@@ -96,13 +96,8 @@ export function FinancesApp() {
+ import { BankSyncStatus } from './BankSyncStatus';
+ import { CommandBar } from './CommandBar';
+@@ -97,13 +96,8 @@ export function FinancesApp() {
  
    const { data: accounts, isFetching: isAccountsFetching } = useAccounts();
  
@@ -40,7 +42,7 @@ index 19e0367..cd56173 100644
  
    const multiuserEnabled = useMultiuserEnabled();
  
-@@ -115,11 +110,19 @@ export function FinancesApp() {
+@@ -116,11 +110,19 @@ export function FinancesApp() {
  
      async function run() {
        await global.Actual.waitForUpdateReadyForDownload(); // This will only resolve when an update is ready
@@ -61,7 +63,7 @@ index 19e0367..cd56173 100644
              message: t(
                'Click the button below to reload and apply the update.',
              ),
-@@ -141,56 +144,6 @@ export function FinancesApp() {
+@@ -142,56 +144,6 @@ export function FinancesApp() {
  
    useEffect(() => init(), []);
  
@@ -118,3 +120,25 @@ index 19e0367..cd56173 100644
    const scrollableRef = useRef<HTMLDivElement>(null);
  
    return (
+@@ -433,18 +385,9 @@ export function FinancesApp() {
+                       }
+                     />
+                   )}
+-                  {multiuserEnabled && (
+-                    <Route
+-                      path="/user-access"
+-                      element={
+-                        <ProtectedRoute
+-                          permission={Permissions.ADMINISTRATOR}
+-                          validateOwner
+-                          element={<UserAccessPage />}
+-                        />
+-                      }
+-                    />
+-                  )}
++                  {/* No /user-access route: budget sharing is not a Trackie
++                      feature, so the page is unreachable by URL as well as
++                      unlinked from the menu (see the LoggedInUser patch). */}
+                   {/* redirect all other traffic to the budget page */}
+                   <Route
+                     path="/*"

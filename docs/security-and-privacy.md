@@ -75,6 +75,12 @@ The NZ overlay adds the HMAC identity handling below.
   exception: the unauthenticated owner-created check the login page needs. Any endpoint a
   future upstream release adds under `/admin` is therefore closed by default until it is
   consciously allow-listed - so a new upstream feature cannot silently leak across tenants.
+- **Budget sharing is switched off entirely.** Upstream lets a
+  file owner or admin grant another user access to a budget, and transfer its ownership. Trackie
+  refuses all five of those endpoints (`/admin/access*`) outright, before any session or role is
+  even examined, so the refusal cannot depend on who is asking. The matching UI - the "User
+  Access Management" menu entry and the `/user-access` page - is removed from the client, and
+  the page is not shipped in the built bundle at all.
 
 ## End-to-end encryption of budgets
 
