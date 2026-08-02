@@ -1,9 +1,9 @@
 diff --git a/packages/desktop-client/src/hooks/useFeatureFlag.ts b/packages/desktop-client/src/hooks/useFeatureFlag.ts
-index 3efc596..84544b2 100644
+index 7e9b435c..58aa7e5d 100644
 --- a/packages/desktop-client/src/hooks/useFeatureFlag.ts
 +++ b/packages/desktop-client/src/hooks/useFeatureFlag.ts
-@@ -15,7 +15,7 @@ const DEFAULT_FEATURE_FLAG_STATE: Record<FeatureFlag, boolean> = {
-   payeeLocations: false,
+@@ -13,7 +13,7 @@ const DEFAULT_FEATURE_FLAG_STATE: Record<FeatureFlag, boolean> = {
+   budgetAnalysisReport: false,
    enableBanking: false,
    sankeyReport: false,
 -  akahuBankSync: false,

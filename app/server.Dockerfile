@@ -13,7 +13,7 @@
 # server-only rebuilds and local smoke. The SHIPPING image, which includes our
 # client changes, is built by release.Dockerfile via .github/workflows/release.yml.
 
-ARG ACTUAL_VERSION=26.7.0
+ARG ACTUAL_VERSION=26.8.0
 
 # ---- Stage 1: rebuild ONLY the sync-server bundle, with the overlay ----
 FROM node:22-bookworm AS builder

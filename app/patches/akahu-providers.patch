@@ -1,8 +1,8 @@
 diff --git a/packages/desktop-client/src/components/banksync/useBuiltInBankSyncProviders.ts b/packages/desktop-client/src/components/banksync/useBuiltInBankSyncProviders.ts
-index d99ce86..95c1cc0 100644
+index ee038f25..c7d341be 100644
 --- a/packages/desktop-client/src/components/banksync/useBuiltInBankSyncProviders.ts
 +++ b/packages/desktop-client/src/components/banksync/useBuiltInBankSyncProviders.ts
-@@ -325,19 +325,11 @@ export function useBuiltInBankSyncProviders({
+@@ -354,19 +354,11 @@ export function useBuiltInBankSyncProviders({
  
    const onAkahuReset = useCallback(async () => {
      try {
@@ -26,7 +26,7 @@ index d99ce86..95c1cc0 100644
        );
        setIsAkahuSetupComplete(false);
      } catch (error) {
-@@ -649,14 +641,18 @@ export function useBuiltInBankSyncProviders({
+@@ -686,7 +678,9 @@ export function useBuiltInBankSyncProviders({
        });
  
      if (akahuEnabled) {
@@ -37,9 +37,10 @@ index d99ce86..95c1cc0 100644
          id: 'akahu',
          displayName: 'Akahu',
          description: t(
-           'Link a New Zealand bank account to automatically download transactions.',
-         ),
+@@ -695,7 +689,9 @@ export function useBuiltInBankSyncProviders({
          isConfigured: configuredProviders.akahu,
+         credentialSource: 'global',
+         supportsPerBudgetFile: false,
 -        canConfigure: canConfigureProviders,
 +        /* Each user manages their own personal Akahu token, so any signed-in
 +           user can configure this card (other providers stay admin-gated). */
@@ -47,7 +48,7 @@ index d99ce86..95c1cc0 100644
          isLoading: loadingAkahuAccounts,
          onConfigure: onAkahuInit,
          onLink: onConnectAkahu,
-@@ -680,7 +676,13 @@ export function useBuiltInBankSyncProviders({
+@@ -721,7 +717,13 @@ export function useBuiltInBankSyncProviders({
        });
      }
  
@@ -61,16 +62,30 @@ index d99ce86..95c1cc0 100644
 +    );
    }, [
      canConfigureProviders,
-     configuredProviders.enableBanking,
-@@ -712,7 +714,10 @@ export function useBuiltInBankSyncProviders({
+     isAdmin,
+@@ -756,12 +758,21 @@ export function useBuiltInBankSyncProviders({
+     t,
    ]);
  
-   const providersNeedingConfiguration = providers.filter(
--    provider => !provider.isConfigured,
-+    /* Akahu is self-service (canConfigure: true for everyone), so don't list it
-+       in the admin-permission warning - only name providers a normal user truly
-+       cannot configure. */
+-  const permissionWarning = getPermissionWarning(
+-    syncServerStatus,
+-    isAdmin,
+-    isFileOwner,
++  /* Akahu is self-service (canConfigure: true for everyone) and the filter
++     above already drops anything a normal user can neither configure nor link,
++     so an ordinary Trackie user is typically left with nothing to be warned
++     about. Only raise the admin-permission warning when a visible provider
++     genuinely needs an admin; getPermissionWarning itself is upstream's, left
++     untouched so its unit tests still describe real behaviour. */
++  const providersNeedingConfiguration = providers.filter(
 +    provider => !provider.isConfigured && !provider.canConfigure,
    );
  
++  const permissionWarning =
++    providersNeedingConfiguration.length > 0
++      ? getPermissionWarning(syncServerStatus, isAdmin, isFileOwner)
++      : null;
++
    return {
+     providers,
+     syncServerStatus,

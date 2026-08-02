@@ -1,17 +1,8 @@
 diff --git a/packages/loot-core/src/server/accounts/app.ts b/packages/loot-core/src/server/accounts/app.ts
-index e531c23..e165f08 100644
+index 8d1138b1..a4f5307d 100644
 --- a/packages/loot-core/src/server/accounts/app.ts
 +++ b/packages/loot-core/src/server/accounts/app.ts
-@@ -14,7 +14,7 @@ import {
- } from '#server/errors';
- import { app as mainApp } from '#server/main-app';
- import { mutator } from '#server/mutators';
--import { get, post } from '#server/post';
-+import { del, get, post } from '#server/post';
- import { getServer } from '#server/server-config';
- import { batchMessages } from '#server/sync';
- import { undoable, withUndo } from '#server/undo';
-@@ -81,6 +81,8 @@ export type AccountHandlers = {
+@@ -83,6 +83,8 @@ export type AccountHandlers = {
    'simplefin-accounts': typeof simpleFinAccounts;
    'pluggyai-accounts': typeof pluggyAiAccounts;
    'akahu-accounts': typeof akahuAccounts;
@@ -20,7 +11,7 @@ index e531c23..e165f08 100644
    'gocardless-get-banks': typeof getGoCardlessBanks;
    'gocardless-create-web-token': typeof createGoCardlessWebToken;
    'accounts-bank-sync': typeof accountsBankSync;
-@@ -1010,6 +1012,78 @@ async function akahuAccounts() {
+@@ -1031,6 +1033,78 @@ async function akahuAccounts() {
    }
  }
  
@@ -99,7 +90,7 @@ index e531c23..e165f08 100644
  async function enableBankingStatus() {
    const userToken = await asyncStorage.getItem('user-token');
  
-@@ -1762,6 +1836,8 @@ app.method('enablebanking-configure', enableBankingConfigure);
+@@ -1787,6 +1861,8 @@ app.method('enablebanking-configure', enableBankingConfigure);
  app.method('simplefin-accounts', simpleFinAccounts);
  app.method('pluggyai-accounts', pluggyAiAccounts);
  app.method('akahu-accounts', akahuAccounts);
