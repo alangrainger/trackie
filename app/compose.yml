@@ -34,6 +34,9 @@ services:
       #     secret. If rotated/lost, stored tokens become undecryptable and users
       #     simply re-paste (no budget data is lost). ---
       ACTUAL_AKAHU_TOKEN_SECRET: ${ACTUAL_AKAHU_TOKEN_SECRET}
+      # --- Support contact shown in the app's Help menu (served at runtime via
+      #     /trackie-config). Optional; the menu entry is hidden when unset. ---
+      TRACKIE_SUPPORT_EMAIL: ${TRACKIE_SUPPORT_EMAIL:-}
       # --- Server timezone: transaction dates are bucketed in local time, so pin
       #     it to NZ so a late-evening transaction lands on the right NZ day. ---
       TZ: Pacific/Auckland

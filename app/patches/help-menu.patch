@@ -1,0 +1,83 @@
+diff --git a/packages/desktop-client/src/components/HelpMenu.tsx b/packages/desktop-client/src/components/HelpMenu.tsx
+index 51b626e..f4761a6 100644
+--- a/packages/desktop-client/src/components/HelpMenu.tsx
++++ b/packages/desktop-client/src/components/HelpMenu.tsx
+@@ -1,13 +1,15 @@
+-import { forwardRef, useRef } from 'react';
++import { forwardRef, useEffect, useRef, useState } from 'react';
+ import { useHotkeys } from 'react-hotkeys-hook';
+ import { Trans, useTranslation } from 'react-i18next';
+ import { useLocation } from 'react-router';
+ 
+ import { Button } from '@actual-app/components/button';
++import { SvgEnvelope } from '@actual-app/components/icons/v1';
+ import { SvgHelp } from '@actual-app/components/icons/v2';
+ import { Menu } from '@actual-app/components/menu';
+ import { Popover } from '@actual-app/components/popover';
+ import { SpaceBetween } from '@actual-app/components/space-between';
++import * as asyncStorage from '@actual-app/core/platform/server/asyncStorage';
+ import { useToggle } from 'usehooks-ts';
+ 
+ import { useFeatureFlag } from '#hooks/useFeatureFlag';
+@@ -42,7 +44,8 @@ type HelpMenuItem =
+   | 'docs'
+   | 'discord'
+   | 'keyboard-shortcuts'
+-  | 'goal-templates';
++  | 'goal-templates'
++  | 'support-email';
+ 
+ type HelpButtonProps = {
+   onPress?: () => void;
+@@ -80,6 +83,24 @@ export const HelpMenu = () => {
+   const dispatch = useDispatch();
+   const page = useLocation().pathname;
+ 
++  /* Deployment config (TRACKIE_SUPPORT_EMAIL in the server .env), fetched at
++  runtime so the address is never in the public source or the built bundle.
++  The endpoint requires a valid session; the menu entry is hidden when the
++  address is unset or the fetch fails. */
++  const [supportEmail, setSupportEmail] = useState<string | null>(null);
++  useEffect(() => {
++    asyncStorage
++      .getItem('user-token')
++      .then(token =>
++        token
++          ? fetch('/trackie-config', { headers: { 'X-ACTUAL-TOKEN': token } })
++          : null,
++      )
++      .then(res => (res && res.ok ? res.json() : null))
++      .then(data => setSupportEmail(data?.supportEmail || null))
++      .catch(() => setSupportEmail(null));
++  }, []);
++
+   const handleItemSelect = (item: HelpMenuItem) => {
+     switch (item) {
+       case 'docs':
+@@ -94,6 +115,9 @@ export const HelpMenu = () => {
+       case 'goal-templates':
+         dispatch(pushModal({ modal: { name: 'goal-templates' } }));
+         break;
++      case 'support-email':
++        window.location.href = `mailto:${supportEmail}`;
++        break;
+       default:
+         throw new Error(`Unrecognized menu option: ${String(item)}`);
+     }
+@@ -130,6 +154,16 @@ export const HelpMenu = () => {
+             ...(showGoalTemplates && page === '/budget'
+               ? [{ name: 'goal-templates', text: t('Goal templates') }]
+               : []),
++            ...(supportEmail
++              ? [
++                  {
++                    name: 'support-email',
++                    text: supportEmail,
++                    icon: SvgEnvelope,
++                    iconSize: 14,
++                  },
++                ]
++              : []),
+           ]}
+         />
+       </Popover>

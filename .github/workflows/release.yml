@@ -135,6 +135,8 @@ jobs:
           for p in /admin/access/ /admin/access/users /admin/access/transfer-ownership/; do
             test "$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:5006${p}")" = 403
           done
+          echo "GET /trackie-config without a session (must be 401):"
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:5006/trackie-config/)" = 401
           echo "smoke passed"
 
       - name: Cross-user budget isolation smoke (bob cannot see alice)
