@@ -11,8 +11,9 @@
 #
 # The overlay covers privacy sign-in (HMAC identity + reject unverified email),
 # the deny-by-default /admin gateway, the /get-started deep link, per-user NZ
-# Akahu bank sync, active-user tracking, the Help-menu support contact, and
-# Trackie branding/theme. Upstream
+# Akahu bank sync, active-user tracking, the Help-menu support contact, API
+# access for password-only clients (session-token login intercept + the
+# /account/api-token page), and Trackie branding/theme. Upstream
 # ships Akahu bank sync with admin-wide tokens; the overlay layers onto it to
 # make those tokens per-user, without forking any of upstream's own
 # transaction-processing code.

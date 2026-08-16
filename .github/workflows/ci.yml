@@ -75,6 +75,11 @@ jobs:
           done
           echo "GET /trackie-config without a session (must be 401):"
           test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:5006/trackie-config/)" = 401
+          echo "GET /account/api-token (server-served page, must be 200):"
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:5006/account/api-token)" = 200
+          echo "POST /account/login with a non-token password falls through to upstream (must not 500):"
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' \
+            -d '{"loginMethod":"password","password":"not-a-real-token"}' http://localhost:5006/account/login)" != 500
           echo "smoke passed"
       - name: Cross-user budget isolation smoke (bob cannot see alice)
         # Regression guard for app-sync.ts, which the overlay never patches (so the
