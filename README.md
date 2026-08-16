@@ -9,6 +9,7 @@ No cost, no ads, no data harvesting, New Zealand only.
 
 - **[About this service](docs/about-this-service.md)** - what Trackie is, why it is free, how your data is kept safe.
 - **[Security & privacy](docs/security-and-privacy.md)** - the technical detail: identity, per-user isolation, end-to-end encryption, and the per-user, read-only, encrypted NZ bank sync.
+- **[Connecting other tools (API access)](docs/api-access.md)** - how to use Actual Budget API tools (such as actual-mcp) with your Trackie account.
 
 ## What you get
 
